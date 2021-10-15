@@ -5,10 +5,15 @@ from lxml import etree
 import xlwt
 import time
 import random
+import json
+
+proxy = "proxy.lfk.qianxin-inc.cn"
+proxies = {"http": "http://" + proxy,
+           "https": "https://" + proxy}
 
 
 def GetMovieList(link):
-    res = requests.get(link, headers=headers, allow_redirects=False)
+    res = requests.get(link, headers=headers, allow_redirects=True)
     res.encoding = 'utf-8'
     movies = []
     stars = []
@@ -57,25 +62,29 @@ if __name__ == '__main__':
     start_link = 'https://movie.douban.com/people/158707318/collect?start='  # 自行修改你的域名
     headers = {
         "Host": "movie.douban.com",
-        "Referer": "https://www.douban.com/people/158707318/",
+        "Referer": "https://movie.douban.com/people/158707318",
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 '
                       'Safari/537.36 ',
-        'Cookie': 'll="108288"; bid=sC04JLLd66Q; push_doumail_num=0; __utmv=30149280.15870; douban-fav-remind=1; ct=y; _vwo_uuid_v2=DC6410694325D8D34E871A55D20EC2398|a4947ebb95b86ee4720ccdc7694bfbf0; _vwo_uuid_v2=DC6410694325D8D34E871A55D20EC2398|a4947ebb95b86ee4720ccdc7694bfbf0; dbcl2="158707318:Vzg1SibqReQ"; gr_user_id=344cc8d4-628c-430a-8eba-d5a93d45bc88; __utmz=30149280.1629704489.24.4.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; ck=D3aW; ap_v=0,6.0; push_noty_num=0; __utma=30149280.2126853780.1628495426.1630640734.1630905452.36; __utmc=30149280; __utma=223695111.2114745503.1628670511.1630640734.1630905458.5; __utmb=223695111.0.10.1630905458; __utmc=223695111; __utmz=223695111.1630905458.5.4.utmcsr=douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/; _pk_ses.100001.4cf6=*; _pk_ref.100001.4cf6=["","",1630905458,"https://www.douban.com/"]; __utmt=1; __utmb=30149280.4.10.1630905452; _pk_id.100001.4cf6=e836fd6c50db952c.1628670511.5.1630906696.1630642404.'
-    }  # 在Referer里修改你的域名
+        'Cookie': 'll="108288"; bid=sC04JLLd66Q; push_doumail_num=0; __utmv=30149280.15870; douban-fav-remind=1; _vwo_uuid_v2=DC6410694325D8D34E871A55D20EC2398|a4947ebb95b86ee4720ccdc7694bfbf0; gr_user_id=344cc8d4-628c-430a-8eba-d5a93d45bc88; _ga=GA1.2.2126853780.1628495426; push_noty_num=0; dbcl2="158707318:5LgU+CYX6l8"; ck=nQjZ; __utmc=30149280; __utmz=30149280.1639991661.115.16.utmcsr=accounts.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/; _pk_ref.100001.8cb4=["","",1640079427,"https://accounts.douban.com/"]; _pk_id.100001.8cb4=68985021adf8057f.1628495425.110.1640079427.1639992082.; _pk_ses.100001.8cb4=*; ap_v=0,6.0; __utma=30149280.2126853780.1628495426.1639991661.1640079427.116; __utmt=1; __utmb=30149280.2.10.1640079427'
+    }
     depth = 54  # 你的页数
     lists = {'MOVIE': [], 'DATE': [], 'COMMENT': [], 'RATING': []}
     print("Start : %s" % time.ctime())
-    for i in range(depth):
+    # for i in range(depth):
+    for i in range(1):
         link = start_link + str(15 * i)
-        time.sleep(random.random() * 3)
+        time.sleep(random.random() * 6)
         MovieInfo = GetMovieList(link)
         # print(MovieInfo)
         lists['MOVIE'].extend(MovieInfo['movie'])
         lists['DATE'].extend(MovieInfo['date'])
         lists['COMMENT'].extend(MovieInfo['comment'])
         lists['RATING'].extend(MovieInfo['rating'])
+        # print(lists)
         for j in range(len(MovieInfo['picture'])):
             pic_url = MovieInfo['picture'][j]
-    print(lists)
-    exportexcel(lists, 'E:\Study\spider')
+    js = json.dumps(lists, ensure_ascii=False)
+    # print(lists)
+    # print(js)
+    # exportexcel(lists, 'E:\Study\spider')
     print("End : %s" % time.ctime())
